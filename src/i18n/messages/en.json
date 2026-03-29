@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "Daily Stack",
+    "description": "Daily and weekly task management"
+  },
+  "nav": {
+    "today": "Today",
+    "week": "Week",
+    "help": "Help",
+    "signIn": "Sign in",
+    "language": "Language"
+  },
+  "dates": {
+    "today": "Today",
+    "days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "shortDays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "dayFormat": "{day} {date} {month}",
+    "weekFormat": "Week {week} — {month} {year}"
+  },
+  "status": {
+    "TODAY": "Today",
+    "TODO": "To Do",
+    "BLOCKED": "Blocked",
+    "DONE": "Done"
+  },
+  "category": {
+    "Cliente": "Client",
+    "Producto": "Product",
+    "Admin": "Admin"
+  },
+  "dayView": {
+    "loading": "Loading..."
+  },
+  "taskInput": {
+    "placeholder": "Add task — Enter to create, Shift+Enter for details"
+  },
+  "taskSection": {
+    "emptyToday": "Move tasks from To Do to start your day",
+    "empty": "No tasks",
+    "warningBadge": "5+ tasks"
+  },
+  "taskSheet": {
+    "editTitle": "Edit task",
+    "newTitle": "New task",
+    "titleLabel": "Title",
+    "titlePlaceholder": "What do you need to do?",
+    "categoryLabel": "Category",
+    "noteLabel": "Note",
+    "notePlaceholder": "Optional note",
+    "delete": "Delete",
+    "save": "Save",
+    "create": "Create"
+  },
+  "statusButton": {
+    "moveTo": "Move to {status}"
+  },
+  "blockedDialog": {
+    "title": "Move from Blocked to {target}",
+    "label": "Add a note explaining the resolution",
+    "placeholder": "What changed?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "yesterday": {
+    "message": "You have {count} incomplete task(s) from yesterday",
+    "moveButton": "Move to today"
+  },
+  "weekDayCard": {
+    "noTasks": "No tasks",
+    "done": "{count} done",
+    "today": "{count} today",
+    "blocked": "{count} blocked"
+  },
+  "intentions": {
+    "title": "Week intentions (3–5)",
+    "bannerTitle": "Week intentions",
+    "placeholder": "Intention {num}",
+    "add": "Add",
+    "save": "Save",
+    "hint": "Enter to add · Ctrl+Enter to save"
+  },
+  "backlog": {
+    "title": "Backlog",
+    "empty": "No tasks in backlog. Use the day view with Shift+Enter to create tasks without a day."
+  },
+  "migration": {
+    "prompt": "Local tasks found. Import to your account?",
+    "importing": "Importing...",
+    "import": "Import",
+    "success": "Imported: {tasks} tasks, {plans} week plans",
+    "error": "Import failed. Try again."
+  },
+  "help": {
+    "pageTitle": "How to use Daily Stack",
+    "ritualsTitle": "The 3 rituals",
+    "ritual1Title": "Monday — Weekly planning",
+    "ritual1Desc": "Open the week view and define 3–5 intentions for the week. These guide your daily focus.",
+    "ritual2Title": "Every morning — Prepare the day",
+    "ritual2Desc": "Review today's tasks. Move to TODAY only the ones you'll actually do (max 5). The rest stays in TODO.",
+    "ritual3Title": "Friday — Weekly review",
+    "ritual3Desc": "Review the week view: intentions met, blocked tasks, and pending backlog. Adjust for next week.",
+    "statesTitle": "The 4 states",
+    "stateTodoDesc": "Pending task. Can be moved to TODAY or BLOCKED.",
+    "stateTodayDesc": "Committed for today. Can be completed (DONE), moved back to TODO, or blocked.",
+    "stateBlockedDesc": "Blocked by external dependency. Unblocking requires an explanatory note.",
+    "stateDoneDesc": "Completed. Immutable state — cannot be reopened.",
+    "limitTitle": "The rule of 5",
+    "limitDesc": "If you have more than 5 tasks in TODAY, a red warning badge appears. More than 5 real commitments in a day is unrealistic — the limit forces you to prioritize.",
+    "faqTitle": "Frequently asked questions",
+    "faq1Q": "What happens to yesterday's incomplete tasks?",
+    "faq1A": "They stay on their day. Today you'll see a prompt to move them.",
+    "faq2Q": "Can I create tasks without a day?",
+    "faq2A": "Yes, they go to the weekly backlog.",
+    "faq3Q": "Why the limit of 5 in TODAY?",
+    "faq3A": "More than 5 real commitments in a day is unrealistic. The limit forces prioritization.",
+    "faq4Q": "Can I reopen a DONE task?",
+    "faq4A": "No. If there's a follow-up, create a new task.",
+    "faq5Q": "Will I lose my data?",
+    "faq5A": "Your data is stored in the cloud with Supabase. You can access it from any device."
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "app": {
+    "title": "Daily Stack",
+    "description": "Gestión de tareas diarias y semanales"
+  },
+  "nav": {
+    "today": "Hoy",
+    "week": "Semana",
+    "help": "Ayuda",
+    "signIn": "Iniciar sesión",
+    "language": "Idioma"
+  },
+  "dates": {
+    "today": "Hoy",
+    "days": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+    "shortDays": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+    "months": ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+    "dayFormat": "{day} {date} de {month}",
+    "weekFormat": "Semana {week} — {month} {year}"
+  },
+  "status": {
+    "TODAY": "Hoy",
+    "TODO": "Pendiente",
+    "BLOCKED": "Bloqueado",
+    "DONE": "Hecho"
+  },
+  "category": {
+    "Cliente": "Cliente",
+    "Producto": "Producto",
+    "Admin": "Admin"
+  },
+  "dayView": {
+    "loading": "Cargando..."
+  },
+  "taskInput": {
+    "placeholder": "Añadir tarea — Enter crear, Shift+Enter detalles"
+  },
+  "taskSection": {
+    "emptyToday": "Mueve tareas desde Pendiente para empezar el día",
+    "empty": "Sin tareas",
+    "warningBadge": "+5 tareas"
+  },
+  "taskSheet": {
+    "editTitle": "Editar tarea",
+    "newTitle": "Nueva tarea",
+    "titleLabel": "Título",
+    "titlePlaceholder": "¿Qué necesitas hacer?",
+    "categoryLabel": "Categoría",
+    "noteLabel": "Nota",
+    "notePlaceholder": "Nota opcional",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "create": "Crear"
+  },
+  "statusButton": {
+    "moveTo": "Mover a {status}"
+  },
+  "blockedDialog": {
+    "title": "Mover de Bloqueado a {target}",
+    "label": "Añade una nota explicando la resolución",
+    "placeholder": "¿Qué cambió?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "yesterday": {
+    "message": "Tienes {count} tarea(s) de ayer sin completar",
+    "moveButton": "Mover a hoy"
+  },
+  "weekDayCard": {
+    "noTasks": "Sin tareas",
+    "done": "{count} hecho",
+    "today": "{count} hoy",
+    "blocked": "{count} bloq."
+  },
+  "intentions": {
+    "title": "Intenciones de la semana (3–5)",
+    "bannerTitle": "Intenciones de la semana",
+    "placeholder": "Intención {num}",
+    "add": "Añadir",
+    "save": "Guardar",
+    "hint": "Enter añadir · Ctrl+Enter guardar"
+  },
+  "backlog": {
+    "title": "Backlog",
+    "empty": "Sin tareas en backlog. Usa la vista diaria con Shift+Enter para crear tareas sin día."
+  },
+  "migration": {
+    "prompt": "Se encontraron tareas locales. ¿Importar a tu cuenta?",
+    "importing": "Importando...",
+    "import": "Importar",
+    "success": "Importados: {tasks} tareas, {plans} planes semanales",
+    "error": "Error al importar. Intenta de nuevo."
+  },
+  "help": {
+    "pageTitle": "Cómo usar Daily Stack",
+    "ritualsTitle": "Los 3 rituales",
+    "ritual1Title": "Lunes — Planificación semanal",
+    "ritual1Desc": "Abre la vista semanal y define 3–5 intenciones para la semana. Estas guían tu foco diario.",
+    "ritual2Title": "Cada mañana — Preparar el día",
+    "ritual2Desc": "Revisa las tareas de hoy. Mueve a TODAY solo las que vas a hacer (máximo 5). El resto queda en TODO.",
+    "ritual3Title": "Viernes — Revisión semanal",
+    "ritual3Desc": "Revisa la vista semanal: intenciones cumplidas, tareas bloqueadas, y backlog pendiente. Ajusta para la siguiente semana.",
+    "statesTitle": "Los 4 estados",
+    "stateTodoDesc": "Tarea pendiente. Puede moverse a TODAY o BLOCKED.",
+    "stateTodayDesc": "Comprometida para hoy. Puede completarse (DONE), volver a TODO, o bloquearse.",
+    "stateBlockedDesc": "Bloqueada por dependencia externa. Al desbloquear, requiere nota explicativa.",
+    "stateDoneDesc": "Completada. Estado inmutable — no se puede reabrir.",
+    "limitTitle": "Regla del límite de 5",
+    "limitDesc": "Si tienes más de 5 tareas en TODAY, aparece un badge rojo de aviso. Más de 5 compromisos reales en un día es ilusorio — el límite te fuerza a priorizar.",
+    "faqTitle": "Preguntas frecuentes",
+    "faq1Q": "¿Qué pasa con las tareas de ayer que no completé?",
+    "faq1A": "Quedan en su día. Hoy te aparece un aviso para moverlas.",
+    "faq2Q": "¿Puedo crear tareas sin día asignado?",
+    "faq2A": "Sí, van al backlog semanal.",
+    "faq3Q": "¿Por qué el límite de 5 en TODAY?",
+    "faq3A": "Más de 5 compromisos reales en un día es ilusorio. El límite fuerza a priorizar.",
+    "faq4Q": "¿Puedo reabrir una tarea DONE?",
+    "faq4A": "No. Si hay follow-up, crea una tarea nueva.",
+    "faq5Q": "¿Se pierden mis datos?",
+    "faq5A": "Tus datos se guardan en la nube con Supabase. Puedes acceder desde cualquier dispositivo."
+  }
+}

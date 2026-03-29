@@ -1,27 +1,46 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { WeekPlan } from "@/types/task";
-import * as storage from "@/lib/storage";
+import {
+  fetchWeekPlan,
+  saveWeekIntentions,
+} from "@/app/actions/week-plans";
 
 export function useWeekPlan(weekSlot: string) {
-  const [plan, setPlan] = useState<WeekPlan | undefined>(() =>
-    storage.getWeekPlan(weekSlot),
-  );
+  const [plan, setPlan] = useState<WeekPlan | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
-  const reload = useCallback(() => {
-    setPlan(storage.getWeekPlan(weekSlot));
+  const reload = useCallback(async () => {
+    const data = await fetchWeekPlan(weekSlot);
+    if (data) {
+      setPlan({
+        weekSlot: data.weekSlot,
+        intentions: data.intentions,
+        createdAt: data.createdAt.toISOString(),
+        updatedAt: data.updatedAt.toISOString(),
+      });
+    } else {
+      setPlan(undefined);
+    }
+    setLoading(false);
   }, [weekSlot]);
 
+  useEffect(() => {
+    setLoading(true);
+    reload();
+  }, [reload]);
+
   const saveIntentions = useCallback(
-    (intentions: string[]) => {
-      const now = new Date().toISOString();
-      const updated: WeekPlan = plan
-        ? { ...plan, intentions, updatedAt: now }
-        : { weekSlot, intentions, createdAt: now, updatedAt: now };
-      storage.saveWeekPlan(updated);
-      setPlan(updated);
+    async (intentions: string[]) => {
+      const data = await saveWeekIntentions(weekSlot, intentions);
+      setPlan({
+        weekSlot: data.weekSlot,
+        intentions: data.intentions,
+        createdAt: data.createdAt.toISOString(),
+        updatedAt: data.updatedAt.toISOString(),
+      });
     },
-    [weekSlot, plan],
+    [weekSlot]
   );
 
-  return { plan, saveIntentions, reload };
+  return { plan, loading, saveIntentions, reload };
 }

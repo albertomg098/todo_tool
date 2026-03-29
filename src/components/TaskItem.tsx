@@ -1,7 +1,10 @@
+"use client";
+
 import type { Task, Status } from "@/types/task";
 import { Badge } from "@/components/ui/badge";
 import { StatusButton } from "./StatusButton";
 import { Circle, CheckCircle2, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const categoryVariant: Record<string, "default" | "secondary" | "outline"> = {
   Cliente: "default",
@@ -19,10 +22,11 @@ interface TaskItemProps {
 export function TaskItem({ task, onComplete, onChangeStatus, onOpenSheet }: TaskItemProps) {
   const isDone = task.status === "DONE";
   const isBlocked = task.status === "BLOCKED";
+  const tCat = useTranslations("category");
 
   return (
     <div
-      className={`rounded-md border px-3 py-2 ${isDone ? "opacity-60" : ""}`}
+      className={`rounded-md border px-3 py-2 hover:bg-muted/30 transition-colors ${isDone ? "opacity-60" : ""}`}
     >
       {/* Row 1: checkbox + title + (on sm+) badge + buttons */}
       <div className="flex items-center gap-2">
@@ -31,7 +35,7 @@ export function TaskItem({ task, onComplete, onChangeStatus, onOpenSheet }: Task
             if (!isDone && task.status === "TODAY") onComplete(task.id);
           }}
           disabled={isDone || task.status !== "TODAY"}
-          className="shrink-0"
+          className="shrink-0 cursor-pointer disabled:cursor-default"
         >
           {isDone ? (
             <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -52,7 +56,7 @@ export function TaskItem({ task, onComplete, onChangeStatus, onOpenSheet }: Task
         </div>
 
         <Badge variant={categoryVariant[task.category]} className="shrink-0 text-xs hidden sm:inline-flex">
-          {task.category}
+          {tCat(task.category)}
         </Badge>
 
         <div className="hidden sm:flex">
@@ -71,7 +75,7 @@ export function TaskItem({ task, onComplete, onChangeStatus, onOpenSheet }: Task
       {/* Row 2 (mobile only): badge + buttons */}
       <div className="flex items-center justify-between mt-1 ml-7 sm:hidden">
         <Badge variant={categoryVariant[task.category]} className="text-xs">
-          {task.category}
+          {tCat(task.category)}
         </Badge>
         <StatusButton
           status={task.status}

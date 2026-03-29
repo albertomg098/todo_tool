@@ -1,42 +1,42 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, CalendarDays, HelpCircle } from "lucide-react";
-import { formatDayDisplay, isToday } from "@/lib/dates";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { parseDaySlot, isToday } from "@/lib/dates";
 
 interface DayHeaderProps {
   daySlot: string;
   onPrev: () => void;
   onNext: () => void;
-  onSwitchToWeek?: () => void;
-  onOpenHelp?: () => void;
 }
 
-export function DayHeader({ daySlot, onPrev, onNext, onSwitchToWeek, onOpenHelp }: DayHeaderProps) {
+export function DayHeader({ daySlot, onPrev, onNext }: DayHeaderProps) {
+  const t = useTranslations("dates");
+  const date = parseDaySlot(daySlot);
+  const days: string[] = t.raw("days");
+  const months: string[] = t.raw("months");
+
+  const display = t("dayFormat", {
+    day: days[date.getDay()],
+    date: String(date.getDate()),
+    month: months[date.getMonth()],
+  });
+
   return (
-    <div className="flex items-center justify-between py-4 px-4">
-      <Button variant="ghost" size="icon" onClick={onPrev}>
+    <div className="flex items-center justify-between py-4">
+      <Button variant="ghost" size="icon" onClick={onPrev} className="cursor-pointer">
         <ChevronLeft className="h-5 w-5" />
       </Button>
       <div className="text-center">
-        <h1 className="text-xl font-semibold">{formatDayDisplay(daySlot)}</h1>
+        <h1 className="text-xl font-semibold">{display}</h1>
         {isToday(daySlot) && (
-          <span className="text-sm text-muted-foreground">Hoy</span>
+          <span className="text-sm text-muted-foreground">{t("today")}</span>
         )}
       </div>
-      <div className="flex gap-1">
-        {onOpenHelp && (
-          <Button variant="ghost" size="icon" onClick={onOpenHelp} title="Cómo usar">
-            <HelpCircle className="h-5 w-5" />
-          </Button>
-        )}
-        {onSwitchToWeek && (
-          <Button variant="ghost" size="icon" onClick={onSwitchToWeek} title="Vista semanal">
-            <CalendarDays className="h-5 w-5" />
-          </Button>
-        )}
-        <Button variant="ghost" size="icon" onClick={onNext}>
-          <ChevronRight className="h-5 w-5" />
-        </Button>
-      </div>
+      <Button variant="ghost" size="icon" onClick={onNext} className="cursor-pointer">
+        <ChevronRight className="h-5 w-5" />
+      </Button>
     </div>
   );
 }

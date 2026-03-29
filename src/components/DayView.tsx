@@ -1,9 +1,11 @@
+"use client";
+
 import { useState, useEffect, useCallback } from "react";
 import type { Task, Status, Category } from "@/types/task";
 import { toDaySlot, addDays, getISOWeekSlot, parseDaySlot, isToday, getYesterday } from "@/lib/dates";
 import { useTasks } from "@/hooks/useTasks";
 import { useWeekPlan } from "@/hooks/useWeekPlan";
-import * as storage from "@/lib/storage";
+import { fetchTasksByDay } from "@/app/actions/tasks";
 import { Separator } from "@/components/ui/separator";
 import { DayHeader } from "./DayHeader";
 import { WeekIntentionsBanner } from "./WeekIntentionsBanner";
@@ -12,20 +14,19 @@ import { TaskSection } from "./TaskSection";
 import { TaskSheet } from "./TaskSheet";
 import { YesterdayBanner } from "./YesterdayBanner";
 import { BlockedNoteDialog } from "./BlockedNoteDialog";
+import { DayViewSkeleton } from "./DayViewSkeleton";
 
 const sectionOrder: Status[] = ["TODAY", "TODO", "BLOCKED", "DONE"];
 
 interface DayViewProps {
   initialDay?: string;
-  onSwitchToWeek: () => void;
-  onOpenHelp: () => void;
 }
 
-export function DayView({ initialDay, onSwitchToWeek, onOpenHelp }: DayViewProps) {
+export function DayView({ initialDay }: DayViewProps) {
   const [currentDay, setCurrentDay] = useState(() => initialDay ?? toDaySlot(new Date()));
   const weekSlot = getISOWeekSlot(parseDaySlot(currentDay));
 
-  const { tasks, addTask, updateStatus, updateTask, moveTaskToDay, removeTask, reload } =
+  const { tasks, loading, addTask, updateStatus, updateTask, moveTaskToDay, removeTask } =
     useTasks(currentDay);
   const { plan } = useWeekPlan(weekSlot);
 
@@ -33,17 +34,28 @@ export function DayView({ initialDay, onSwitchToWeek, onOpenHelp }: DayViewProps
   const [yesterdayTasks, setYesterdayTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    reload();
     if (isToday(currentDay)) {
       const yesterday = getYesterday();
-      const yTasks = storage.getTasksByDay(yesterday).filter(
-        (t) => t.status === "TODAY",
-      );
-      setYesterdayTasks(yTasks);
+      fetchTasksByDay(yesterday).then((data) => {
+        const mapped: Task[] = data
+          .filter((t) => t.status === "TODAY")
+          .map((row) => ({
+            id: row.id,
+            title: row.title,
+            status: row.status as Status,
+            category: row.category as Category,
+            notes: row.notes ?? undefined,
+            createdAt: row.createdAt.toISOString(),
+            completedAt: row.completedAt?.toISOString(),
+            daySlot: row.daySlot ?? undefined,
+            weekSlot: row.weekSlot,
+          }));
+        setYesterdayTasks(mapped);
+      });
     } else {
       setYesterdayTasks([]);
     }
-  }, [currentDay, reload]);
+  }, [currentDay]);
 
   // Sheet state
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -87,7 +99,6 @@ export function DayView({ initialDay, onSwitchToWeek, onOpenHelp }: DayViewProps
       const task = tasks.find((t) => t.id === taskId);
       if (!task) return;
 
-      // If moving from BLOCKED, require note
       if (task.status === "BLOCKED" && (newStatus === "TODO" || newStatus === "TODAY")) {
         setBlockedDialog({ taskId, targetStatus: newStatus });
         return;
@@ -115,13 +126,12 @@ export function DayView({ initialDay, onSwitchToWeek, onOpenHelp }: DayViewProps
     [sheetTask, updateTask, addTask],
   );
 
-  const handleMoveYesterday = useCallback(() => {
+  const handleMoveYesterday = useCallback(async () => {
     for (const task of yesterdayTasks) {
-      moveTaskToDay(task.id, currentDay);
+      await moveTaskToDay(task.id, currentDay);
     }
     setYesterdayTasks([]);
-    reload();
-  }, [yesterdayTasks, currentDay, moveTaskToDay, reload]);
+  }, [yesterdayTasks, currentDay, moveTaskToDay]);
 
   const handleBlockedConfirm = useCallback(
     (notes: string) => {
@@ -137,18 +147,24 @@ export function DayView({ initialDay, onSwitchToWeek, onOpenHelp }: DayViewProps
     tasks: tasks.filter((t) => t.status === status),
   }));
 
+  if (loading) {
+    return <DayViewSkeleton />;
+  }
+
   return (
-    <div className="mx-auto w-full max-w-2xl min-h-screen">
-      <DayHeader daySlot={currentDay} onPrev={handlePrev} onNext={handleNext} onSwitchToWeek={onSwitchToWeek} onOpenHelp={onOpenHelp} />
+    <div>
+      <DayHeader daySlot={currentDay} onPrev={handlePrev} onNext={handleNext} />
       <Separator />
 
-      <YesterdayBanner tasks={yesterdayTasks} onMoveToToday={handleMoveYesterday} />
+      <div className="mt-4">
+        <YesterdayBanner tasks={yesterdayTasks} onMoveToToday={handleMoveYesterday} />
 
-      {plan && <WeekIntentionsBanner intentions={plan.intentions} />}
+        {plan && <WeekIntentionsBanner intentions={plan.intentions} />}
 
-      <TaskInput onAdd={handleAdd} onAddWithDetails={handleAddWithDetails} />
+        <TaskInput onAdd={handleAdd} onAddWithDetails={handleAddWithDetails} />
+      </div>
 
-      <Separator className="mb-3" />
+      <Separator className="my-4" />
 
       {grouped.map(({ status, tasks: sectionTasks }) => (
         <TaskSection

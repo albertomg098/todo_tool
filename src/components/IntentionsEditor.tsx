@@ -1,8 +1,11 @@
-import { useState } from "react";
+"use client";
+
+import { useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface IntentionsEditorProps {
   intentions: string[];
@@ -13,6 +16,7 @@ export function IntentionsEditor({ intentions, onSave }: IntentionsEditorProps) 
   const [items, setItems] = useState<string[]>(
     intentions.length > 0 ? [...intentions] : [""],
   );
+  const t = useTranslations("intentions");
 
   function handleChange(index: number, value: string) {
     const updated = [...items];
@@ -36,11 +40,23 @@ export function IntentionsEditor({ intentions, onSave }: IntentionsEditorProps) 
     onSave(filtered);
   }
 
+  function handleKeyDown(e: KeyboardEvent, index: number) {
+    if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      if (index === items.length - 1 && items[index].trim()) {
+        handleAdd();
+      }
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      handleSave();
+    }
+  }
+
   return (
-    <Card className="mx-4 mb-4">
+    <Card className="mb-4">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold">
-          Intenciones de la semana (3–5)
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -49,14 +65,15 @@ export function IntentionsEditor({ intentions, onSave }: IntentionsEditorProps) 
             <Input
               value={item}
               onChange={(e) => handleChange(i, e.target.value)}
-              placeholder={`Intención ${i + 1}`}
+              onKeyDown={(e) => handleKeyDown(e, i)}
+              placeholder={t("placeholder", { num: i + 1 })}
               className="text-sm"
             />
             {items.length > 1 && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="shrink-0 h-9 w-9"
+                className="shrink-0 h-9 w-9 cursor-pointer"
                 onClick={() => handleRemove(i)}
               >
                 <X className="h-4 w-4" />
@@ -64,16 +81,19 @@ export function IntentionsEditor({ intentions, onSave }: IntentionsEditorProps) 
             )}
           </div>
         ))}
-        <div className="flex gap-2 pt-1">
+        <div className="flex items-center gap-2 pt-1">
           {items.length < 5 && (
-            <Button variant="outline" size="sm" onClick={handleAdd}>
+            <Button variant="outline" size="sm" onClick={handleAdd} className="cursor-pointer">
               <Plus className="h-4 w-4 mr-1" />
-              Añadir
+              {t("add")}
             </Button>
           )}
-          <Button size="sm" onClick={handleSave}>
-            Guardar
+          <Button size="sm" onClick={handleSave} className="cursor-pointer">
+            {t("save")}
           </Button>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {t("hint")}
+          </span>
         </div>
       </CardContent>
     </Card>
