@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   Sheet,
@@ -8,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl";
 import type { Status } from "@/types/task";
 
 interface BlockedNoteDialogProps {
@@ -24,6 +27,8 @@ export function BlockedNoteDialog({
   onConfirm,
 }: BlockedNoteDialogProps) {
   const [notes, setNotes] = useState("");
+  const t = useTranslations("blockedDialog");
+  const tStatus = useTranslations("status");
 
   function handleConfirm() {
     if (!notes.trim()) return;
@@ -37,25 +42,25 @@ export function BlockedNoteDialog({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>
-            Mover de BLOCKED a {targetStatus}
+            {t("title", { target: tStatus(targetStatus) })}
           </SheetTitle>
         </SheetHeader>
-        <div className="py-4">
-          <label className="text-sm font-medium">
-            Añade una nota explicando la resolución
+        <div className="px-4 py-4">
+          <label className="text-sm font-medium mb-1.5 block">
+            {t("label")}
           </label>
           <Input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="¿Qué cambió?"
+            placeholder={t("placeholder")}
             autoFocus
             onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
           />
         </div>
         <SheetFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" onClick={onClose}>{t("cancel")}</Button>
           <Button onClick={handleConfirm} disabled={!notes.trim()}>
-            Confirmar
+            {t("confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

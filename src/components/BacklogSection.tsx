@@ -1,6 +1,9 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Task } from "@/types/task";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations } from "next-intl";
 
 const categoryVariant: Record<string, "default" | "secondary" | "outline"> = {
   Cliente: "default",
@@ -13,17 +16,20 @@ interface BacklogSectionProps {
 }
 
 export function BacklogSection({ tasks }: BacklogSectionProps) {
+  const t = useTranslations("backlog");
+  const tCat = useTranslations("category");
+
   return (
-    <Card className="mx-4 mb-4">
+    <Card className="mb-4">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold">
-          Backlog ({tasks.length})
+          {t("title")} ({tasks.length})
         </CardTitle>
       </CardHeader>
       <CardContent>
         {tasks.length === 0 ? (
           <p className="text-xs text-muted-foreground">
-            Sin tareas en backlog. Usa la vista diaria con Shift+Enter para crear tareas sin día.
+            {t("empty")}
           </p>
         ) : (
           <div className="space-y-1">
@@ -34,7 +40,7 @@ export function BacklogSection({ tasks }: BacklogSectionProps) {
               >
                 <span className="flex-1 text-sm truncate">{task.title}</span>
                 <Badge variant={categoryVariant[task.category]} className="text-xs shrink-0">
-                  {task.category}
+                  {tCat(task.category)}
                 </Badge>
               </div>
             ))}

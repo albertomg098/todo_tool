@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -5,6 +7,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface WeekIntentionsBannerProps {
   intentions: string[];
@@ -12,13 +15,14 @@ interface WeekIntentionsBannerProps {
 
 export function WeekIntentionsBanner({ intentions }: WeekIntentionsBannerProps) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("intentions");
 
   if (intentions.length === 0) return null;
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="mx-4 mb-3">
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border bg-muted/50 px-3 py-2 text-sm font-medium hover:bg-muted">
-        <span>Intenciones de la semana ({intentions.length})</span>
+    <Collapsible open={open} onOpenChange={setOpen} className="mb-3">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border bg-muted/50 px-3 py-2 text-sm font-medium hover:bg-muted cursor-pointer">
+        <span>{t("bannerTitle")} ({intentions.length})</span>
         <ChevronDown
           className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
         />

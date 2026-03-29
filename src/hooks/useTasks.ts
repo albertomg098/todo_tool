@@ -1,91 +1,96 @@
-import { useState, useCallback } from "react";
-import { v4 as uuid } from "uuid";
+import { useState, useCallback, useEffect } from "react";
 import type { Task, Status, Category } from "@/types/task";
-import { getISOWeekSlot, parseDaySlot } from "@/lib/dates";
-import { validateTransition } from "@/lib/state-machine";
-import * as storage from "@/lib/storage";
+import {
+  fetchTasksByDay,
+  addTask as addTaskAction,
+  changeTaskStatus,
+  editTask,
+  moveTask,
+  removeTask as removeTaskAction,
+} from "@/app/actions/tasks";
 
 export function useTasks(daySlot: string) {
-  const [tasks, setTasks] = useState<Task[]>(() => storage.getTasksByDay(daySlot));
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const reload = useCallback(() => {
-    setTasks(storage.getTasksByDay(daySlot));
+  const reload = useCallback(async () => {
+    const data = await fetchTasksByDay(daySlot);
+    // Map DB rows to Task interface
+    const mapped: Task[] = data.map((row) => ({
+      id: row.id,
+      title: row.title,
+      status: row.status as Status,
+      category: row.category as Category,
+      notes: row.notes ?? undefined,
+      createdAt: row.createdAt.toISOString(),
+      completedAt: row.completedAt?.toISOString(),
+      daySlot: row.daySlot ?? undefined,
+      weekSlot: row.weekSlot,
+    }));
+    setTasks(mapped);
+    setLoading(false);
   }, [daySlot]);
 
+  useEffect(() => {
+    setLoading(true);
+    reload();
+  }, [reload]);
+
   const addTask = useCallback(
-    (title: string, category: Category = "Producto", notes?: string) => {
-      const task: Task = {
-        id: uuid(),
-        title,
-        status: "TODO",
-        category,
-        notes,
-        createdAt: new Date().toISOString(),
-        daySlot,
-        weekSlot: getISOWeekSlot(parseDaySlot(daySlot)),
-      };
-      storage.saveTask(task);
-      setTasks(storage.getTasksByDay(daySlot));
-      return task;
+    async (title: string, category: Category = "Producto", notes?: string) => {
+      const { getISOWeekSlot, parseDaySlot } = await import("@/lib/dates");
+      const weekSlot = getISOWeekSlot(parseDaySlot(daySlot));
+      await addTaskAction(title, category, notes, daySlot, weekSlot);
+      await reload();
     },
-    [daySlot],
+    [daySlot, reload]
   );
 
   const updateStatus = useCallback(
-    (taskId: string, newStatus: Status, notes?: string) => {
-      const allTasks = storage.loadTasks();
-      const task = allTasks.find((t) => t.id === taskId);
-      if (!task) return;
-
-      const error = validateTransition(task.status, newStatus, notes ?? task.notes);
-      if (error) return error;
-
-      task.status = newStatus;
-      if (newStatus === "DONE") {
-        task.completedAt = new Date().toISOString();
-      }
-      if (notes !== undefined) {
-        task.notes = notes;
-      }
-      storage.saveTask(task);
-      setTasks(storage.getTasksByDay(daySlot));
+    async (taskId: string, newStatus: Status, notes?: string) => {
+      const result = await changeTaskStatus(taskId, newStatus, notes);
+      if (result.error) return result.error;
+      await reload();
       return null;
     },
-    [daySlot],
+    [reload]
   );
 
   const updateTask = useCallback(
-    (taskId: string, updates: Partial<Pick<Task, "title" | "category" | "notes">>) => {
-      const allTasks = storage.loadTasks();
-      const task = allTasks.find((t) => t.id === taskId);
-      if (!task) return;
-      Object.assign(task, updates);
-      storage.saveTask(task);
-      setTasks(storage.getTasksByDay(daySlot));
+    async (
+      taskId: string,
+      updates: Partial<Pick<Task, "title" | "category" | "notes">>
+    ) => {
+      await editTask(taskId, updates);
+      await reload();
     },
-    [daySlot],
+    [reload]
   );
 
   const moveTaskToDay = useCallback(
-    (taskId: string, targetDaySlot: string) => {
-      const allTasks = storage.loadTasks();
-      const task = allTasks.find((t) => t.id === taskId);
-      if (!task) return;
-      task.daySlot = targetDaySlot;
-      task.weekSlot = getISOWeekSlot(parseDaySlot(targetDaySlot));
-      storage.saveTask(task);
-      setTasks(storage.getTasksByDay(daySlot));
+    async (taskId: string, targetDaySlot: string) => {
+      await moveTask(taskId, targetDaySlot);
+      await reload();
     },
-    [daySlot],
+    [reload]
   );
 
   const removeTask = useCallback(
-    (taskId: string) => {
-      storage.deleteTask(taskId);
-      setTasks(storage.getTasksByDay(daySlot));
+    async (taskId: string) => {
+      await removeTaskAction(taskId);
+      await reload();
     },
-    [daySlot],
+    [reload]
   );
 
-  return { tasks, addTask, updateStatus, updateTask, moveTaskToDay, removeTask, reload };
+  return {
+    tasks,
+    loading,
+    addTask,
+    updateStatus,
+    updateTask,
+    moveTaskToDay,
+    removeTask,
+    reload,
+  };
 }

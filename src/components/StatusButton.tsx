@@ -1,8 +1,11 @@
+"use client";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 import type { Status } from "@/types/task";
 import { getAvailableTransitions } from "@/lib/state-machine";
 
@@ -20,11 +23,13 @@ interface StatusButtonProps {
 
 export function StatusButton({ status, onChangeStatus }: StatusButtonProps) {
   const available = getAvailableTransitions(status);
+  const tStatus = useTranslations("status");
+  const tBtn = useTranslations("statusButton");
 
   if (available.length === 0) {
     return (
       <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${statusColors[status]}`}>
-        {status}
+        {tStatus(status)}
       </span>
     );
   }
@@ -37,9 +42,9 @@ export function StatusButton({ status, onChangeStatus }: StatusButtonProps) {
             className={`inline-flex items-center justify-center rounded-md h-6 px-2 text-xs font-medium cursor-pointer ${statusColors[target]}`}
             onClick={() => onChangeStatus(target)}
           >
-            {target}
+            {tStatus(target)}
           </TooltipTrigger>
-          <TooltipContent>Mover a {target}</TooltipContent>
+          <TooltipContent>{tBtn("moveTo", { status: tStatus(target) })}</TooltipContent>
         </Tooltip>
       ))}
     </div>
