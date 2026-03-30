@@ -19,12 +19,11 @@ interface WeekViewProps {
 
 export function WeekView({ onNavigateToDay }: WeekViewProps) {
   const [weekSlot, setWeekSlot] = useState(() => getISOWeekSlot(new Date()));
-  const { plan, saveIntentions, reload } = useWeekPlan(weekSlot);
+  const { plan, saveIntentions } = useWeekPlan(weekSlot);
   const [weekTasks, setWeekTasks] = useState<Task[]>([]);
   const t = useTranslations("dates");
 
   useEffect(() => {
-    reload();
     fetchTasksByWeek(weekSlot).then((data) => {
       const mapped: Task[] = data.map((row) => ({
         id: row.id,
@@ -39,7 +38,7 @@ export function WeekView({ onNavigateToDay }: WeekViewProps) {
       }));
       setWeekTasks(mapped);
     });
-  }, [weekSlot, reload]);
+  }, [weekSlot]);
 
   const daySlots = getWeekDaySlots(weekSlot);
   const backlogTasks = weekTasks.filter((t) => !t.daySlot);
