@@ -78,6 +78,8 @@
     "placeholder": "Intención {num}",
     "add": "Añadir",
     "save": "Guardar",
+    "saved": "¡Guardado!",
+    "savedList": "Intenciones guardadas ({count})",
     "hint": "Enter añadir · Ctrl+Enter guardar"
   },
   "backlog": {
